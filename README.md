@@ -61,7 +61,49 @@ Send requests through the proxy:
 curl -H "Authorization: Bearer my-secret-key" http://localhost:5000/v1/models
 ```
 
+## Pull and configure a model
+
+Ollama itself must have a model downloaded before the proxy can forward requests successfully.
+
+### Local Docker setup
+
+1. Start the services:
+
+```bash
+docker compose up -d
+```
+
+2. Pull a model into Ollama:
+
+```bash
+docker compose exec ollama ollama pull <model-name>
+```
+
+Example:
+
+```bash
+docker compose exec ollama ollama pull llama2
+```
+
+3. Confirm the model is available and then send requests through the proxy:
+
+```bash
+curl -H "Authorization: Bearer my-secret-key" http://localhost:5000/v1/models
+```
+
+### Coolify / remote deployment
+
+If you deploy with Coolify, the Ollama service will start with an empty model cache. Use Coolify's container console or a remote shell to run the same pull command:
+
+```bash
+ollama pull <model-name>
+```
+
+After a model is pulled, the proxy can forward client requests to Ollama normally.
+
 ## Docker
+
+Use `docker-compose.coolify.yml` for Coolify/remote GitHub builds, or `docker-compose.yml` for local development.
 
 Build and run the image:
 

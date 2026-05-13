@@ -23,7 +23,14 @@ services:
       - ollama-data:/root/.ollama
     networks:
       - internal
-
+    healthcheck:
+      test:
+        - CMD
+        - ollama
+        - list
+      interval: 5s
+      timeout: 30s
+      retries: 10
 networks:
   internal:
     driver: bridge

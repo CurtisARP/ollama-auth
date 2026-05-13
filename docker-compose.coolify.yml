@@ -1,47 +1,52 @@
-version: "3.14"
+version: '3.14'
 services:
   ollama-auth:
     build:
-      context: https://github.com/CurtisARP/ollama-auth.git
+      context: 'https://github.com/CurtisARP/ollama-auth.git'
       dockerfile: Dockerfile
     environment:
-      - OLLAMA_UPSTREAM_URL=${OLLAMA_UPSTREAM_URL:-http://ollama:11434}
-      - OLLAMA_API_KEY=${OLLAMA_API_KEY:-changeme}
+      - SERVICE_FQDN_OLLAMA_AUTH_5000
+      - 'OLLAMA_UPSTREAM_URL=http://ollama:11434'
+      - 'OLLAMA_API_KEY=${OLLAMA_API_KEY:-changeme}'
     depends_on:
       - ollama
     networks:
       - internal
       - coolify
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.ollama-auth.rule=Host(`${SERVICE_FQDN_OLLAMA_AUTH_3000}`)"
-      - "traefik.http.routers.ollama-auth.entrypoints=https"
-      - "traefik.http.routers.ollama-auth.tls=true"
-      - "traefik.http.routers.ollama-auth.tls.certresolver=letsencrypt"
-      - "traefik.http.services.ollama-auth.loadbalancer.server.port=5000"
+      - traefik.enable=true
+      - 'traefik.http.routers.ollama-auth.rule=Host(`${SERVICE_FQDN_OLLAMA_AUTH_5000}`)'
+      - traefik.http.routers.ollama-auth.entrypoints=https
+      - traefik.http.routers.ollama-auth.tls=true
+      - traefik.http.routers.ollama-auth.tls.certresolver=letsencrypt
+      - traefik.http.services.ollama-auth.loadbalancer.server.port=5000
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://127.0.0.1:5000/health"]
+      test:
+        - CMD
+        - curl
+        - '-f'
+        - 'http://127.0.0.1:5000/health'
       interval: 2s
       timeout: 10s
       retries: 10
-
   ollama:
-    image: ollama/ollama:latest
+    image: 'ollama/ollama:latest'
     volumes:
-      - ollama-data:/root/.ollama
+      - 'ollama-data:/root/.ollama'
     networks:
       - internal
     healthcheck:
-      test: ["CMD", "ollama", "list"]
+      test:
+        - CMD
+        - ollama
+        - list
       interval: 5s
       timeout: 30s
       retries: 10
-
 networks:
   internal:
     driver: bridge
   coolify:
     external: true
-
 volumes:
-  ollama-data:
+  ollama-data: null
